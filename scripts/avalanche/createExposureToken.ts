@@ -1,9 +1,11 @@
 
 import hre from 'hardhat'
+import { BigNumber } from 'ethers'
 import { TransactionResponse, TransactionReceipt } from '@ethersproject/providers'
 
 import FactoryABI from '../../abi/Factory.json'
 import { Factory } from '../../typechain'
+import { generateEncoding } from '../../src/index'
 
 const main = async function () {
 
@@ -35,9 +37,18 @@ const main = async function () {
     const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
 
     // determine targets, signatures, and values for the exposure token
-    const targets: string[] = ['']
-    const signatures: string[] = ['']
-	const values: string[] = ['']
+    const targets: string[] = [
+        'some_contract_address',
+        'some_other_contract_address'
+    ]
+    const signatures: string[] = [
+        '', // use generateEncoding() here
+        ''
+    ]
+	const values: BigNumber[] = [
+        BigNumber.from(0),
+        BigNumber.from(0)
+    ]
 
     // create exposure token
     const tx: TransactionResponse = await factory.connect(signer).createExposureToken(
