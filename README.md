@@ -1,46 +1,27 @@
-# Advanced Sample Hardhat Project
+# Exposure Token Workshop
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+# Installation
+To install dependencies, `npm i`
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+## Environment Variables
+To use this workshop, create an `.env` file with two variables:
+- `MNEMONIC`: The mnemonic of the account address to create exposure tokens
+- `AVALANCHE_RPC`: The avalanche rpc url. If none is used, then `https://api.avax.network/ext/bc/C/rpc` is used by default
 
-Try running some of the following tasks:
+## Usage
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
-```
+The `createExposureToken.ts` script is a template script meant for easily spinning up an exposure token instance. The script is meant as a guide for arbitrary editing to deploy a desired exposure token.
 
-# Etherscan verification
+The script in the `/avalanche` folder should be run with:
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
+`npx hardhat --network avalanche run scripts/avalanche/createExposureToken.ts`
 
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
+This will run the script on the Avalanche network.
 
-```shell
-hardhat run --network ropsten scripts/sample-script.ts
-```
+---
 
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
+To run a test script first, use the script in the `/fork` folder. This script should be run with: 
 
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
-```
+`npx hardhat --network hardhat run scripts/fork/createExposureToken.ts`
 
-# Performance optimizations
-
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+This runs the script in a local avalanche network fork and should be used for testing before running the mainnet script.
