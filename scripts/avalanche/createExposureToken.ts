@@ -36,16 +36,20 @@ const main = async function () {
     // create factory contract instance
     const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
 
-    // determine targets, signatures, and values for the exposure token
-    const targets: string[] = [
+    // the contract address to call for each transaction
+    const TARGETS: string[] = [
         'some_contract_address',
         'some_other_contract_address'
     ]
-    const signatures: string[] = [
+
+    // the function signatures of each transaction
+    const SIGNATURES: string[] = [
         '', // use generateEncoding() here
         ''
     ]
-	const values: BigNumber[] = [
+
+    // values of native token to send with each transaction
+	const VALUES: BigNumber[] = [
         BigNumber.from(0),
         BigNumber.from(0)
     ]
@@ -56,9 +60,9 @@ const main = async function () {
         GOAL,
         FLOOR,
         INITIAL_BUYOUT_PRICE,
-        targets,
-        signatures,
-        values,
+        TARGETS,
+        SIGNATURES,
+        VALUES,
         TOKEN_NAME
     )
     
