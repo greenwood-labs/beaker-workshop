@@ -1,6 +1,6 @@
 
 import hre from 'hardhat'
-import { BigNumber } from 'ethers'
+import { BigNumber, constants } from 'ethers'
 import { TransactionResponse, TransactionReceipt } from '@ethersproject/providers'
 
 import FactoryABI from '../../abi/Factory.json'
@@ -38,18 +38,18 @@ const main = async function () {
 
     // the contract address to call for each transaction
     const TARGETS: string[] = [
-        'some_contract_address',
-        'some_other_contract_address'
+        '0x0000000000000000000000000000000000000000',
+        '0x0000000000000000000000000000000000000000',
     ]
 
     // the function signatures of each transaction
     const SIGNATURES: string[] = [
-        '', // use generateEncoding() here
-        ''
+        '0x0000000000000000000000000000000000000000', // use generateEncoding() here
+        '0x0000000000000000000000000000000000000000'  // use generateEncoding() here
     ]
 
     // values of native token to send with each transaction
-	const VALUES: BigNumber[] = [
+	  const VALUES: BigNumber[] = [
         BigNumber.from(0),
         BigNumber.from(0)
     ]
