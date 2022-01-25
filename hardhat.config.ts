@@ -17,9 +17,10 @@ const config: HardhatUserConfig = {
     solidity: '0.8.4',
     networks: {
         hardhat: {
+            chainId: 43114,
             forking: {
-                url: process.env.AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc'
-            }
+                url: process.env.AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc',
+            },
         },
         avalanche: {
             url: process.env.AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc',
