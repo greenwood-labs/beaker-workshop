@@ -15,6 +15,13 @@ const main = async function () {
     // retrieve user account provided by mnemonic
     const signer = accounts[0]
 
+    /**
+     * DEFINE PARAMETERS
+     * 
+     * This section is for defining the parameters for creating an exposure token. 
+     * These are default placeholder values that are meant to be changed to custom values.
+     */
+
     // contract address of the exposure token factory
     const FACTORY_ADDRESS = '0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f'
 
@@ -33,9 +40,6 @@ const main = async function () {
     // the name of the exposure token
     const TOKEN_NAME = hre.ethers.utils.formatBytes32String('token-name')
 
-    // create factory contract instance
-    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
-
     // the contract address to call for each transaction
     const TARGETS: string[] = [
         '0x0000000000000000000000000000000000000000',
@@ -43,6 +47,9 @@ const main = async function () {
     ]
 
     // the function signatures of each transaction
+    //
+    // for example, a signature for transferring tokens can be 
+    // derived as follows: generateEncoding(erc20ContractInstance, 'transfer', [accountAddress, transferAmount])
     const SIGNATURES: string[] = [
         '0x0000000000000000000000000000000000000000', // use generateEncoding() here
         '0x0000000000000000000000000000000000000000'  // use generateEncoding() here
@@ -53,6 +60,18 @@ const main = async function () {
         BigNumber.from(0),
         BigNumber.from(0)
     ]
+
+    /**
+     * CONTRACT EXECUTION
+     * 
+     * This section is for contract execution. The factory is instantiated and an 
+     * exposure token is created using the previously defined parameters. 
+     * After the transaction is confirmed, the ID of the exposure token and 
+     * the contract address are displayed as output.
+     */
+
+    // create factory contract instance
+    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
 
     // create exposure token
     const tx: TransactionResponse = await factory.connect(signer).createExposureToken(
@@ -70,11 +89,12 @@ const main = async function () {
     const receipt: TransactionReceipt = await tx.wait()
 
     // exposure token id
-    const exposureTokenId = await factory.exposureTokenCount()
+    const exposureTokenId = (await factory.exposureTokenCount()).sub(1)
 
     // exposure token address
-    const exposureTokenAddress = await factory.getExposureToken(exposureTokenId.sub(1))
+    const exposureTokenAddress = await factory.getExposureToken(exposureTokenId)
 
+    console.log(`Exposure token id: ${exposureTokenId}`)
     console.log(`Exposure token deployed to address: ${exposureTokenAddress}`)
     console.log(`tx: ${receipt.transactionHash}`)
 }
