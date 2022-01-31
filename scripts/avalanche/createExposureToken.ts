@@ -1,6 +1,6 @@
 
 import hre from 'hardhat'
-import { BigNumber, constants } from 'ethers'
+import { BigNumber } from 'ethers'
 import { TransactionResponse, TransactionReceipt } from '@ethersproject/providers'
 
 import FactoryABI from '../../abi/Factory.json'
