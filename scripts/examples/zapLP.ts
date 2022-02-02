@@ -14,7 +14,7 @@ const main = async function () {
      * DESCRIPTION
      * 
      * This exposure token will zap the AVAX funds into a 
-     * JOE-USDC pool on Trader Joe
+     * JOE-USDC liquidity pool on Trader Joe
      */
 
     // get all signers stored in hardhat runtime
