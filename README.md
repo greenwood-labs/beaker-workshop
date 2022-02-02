@@ -14,7 +14,7 @@ Once dependencies are installed and the environment variables are set, you will 
 
 `npm run generate-types`
 
-You should only have to do this one time.
+You should only have to do this one time, or once after you add new ABI files.
 
 ## Usage
 
@@ -22,8 +22,8 @@ The `createExposureToken.ts` script is a template script meant for easily spinni
 
 To run the script on an avalanche local fork for testing:
 
-`npx hardhat run scripts/avalanche/createExposureToken.ts`
+`npx hardhat run scripts/createExposureToken.ts`
 
 To run the script on the avalanche mainnet:
 
-`npx hardhat --network avalanche run scripts/avalanche/createExposureToken.ts`
+`npx hardhat --network avalanche run scripts/createExposureToken.ts`
