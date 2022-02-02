@@ -4,10 +4,19 @@ import { BigNumber } from 'ethers'
 import { TransactionResponse, TransactionReceipt } from '@ethersproject/providers'
 
 import FactoryABI from '../../abi/Factory.json'
-import { Factory } from '../../typechain'
+import BeefyVaultABI from '../../abi/BeefyVault.json'
+import { Factory, BeefyVault } from '../../typechain'
 import { generateEncoding } from '../../src/index'
 
 const main = async function () {
+
+    /**
+     * DESCRIPTION
+     * 
+     * This exposure token will add the AVAX funds to a simple yield optimizer on 
+     * Beefy Finance. In return the exposure token will receive mooAaveAVAX tokens
+     * which will be redeemable for constantly accruing AVAX.
+     */
 
     // get all signers stored in hardhat runtime
     const accounts = await hre.ethers.getSigners()
@@ -25,6 +34,12 @@ const main = async function () {
     // contract address of the exposure token factory
     const FACTORY_ADDRESS = '0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f'
 
+    // contract address of the mooAaveAVAX vault
+    const BEEFY_VAULT_ADDRESS = '0x1B156C5c75E9dF4CAAb2a5cc5999aC58ff4F9090'
+
+    // contract instance of the mooAaveAVAX vault
+    const BEEFY_VAULT_CONTRACT = (await hre.ethers.getContractAt(BeefyVaultABI, BEEFY_VAULT_ADDRESS)) as BeefyVault
+
     // block that ends the funding phase of the exposure token
     const END_BLOCK = 1000000000000
 
@@ -38,12 +53,11 @@ const main = async function () {
     const INITIAL_BUYOUT_PRICE = GOAL.mul(2)
 
     // the name of the exposure token
-    const TOKEN_NAME = hre.ethers.utils.formatBytes32String('token-name')
+    const TOKEN_NAME = hre.ethers.utils.formatBytes32String('avax-beefy-optimizer')
 
     // the contract address to call for each transaction
     const TARGETS: string[] = [
-        '0x0000000000000000000000000000000000000000',
-        '0x0000000000000000000000000000000000000000',
+        BEEFY_VAULT_ADDRESS
     ]
 
     // the function signatures of each transaction
@@ -51,14 +65,12 @@ const main = async function () {
     // for example, a signature for transferring tokens can be 
     // derived as follows: generateEncoding(erc20ContractInstance, 'transfer', [accountAddress, transferAmount])
     const SIGNATURES: string[] = [
-        '0x0000000000000000000000000000000000000000', // use generateEncoding() here
-        '0x0000000000000000000000000000000000000000'  // use generateEncoding() here
+        generateEncoding(BEEFY_VAULT_CONTRACT, 'depositBNB'),
     ]
 
     // values of native token to send with each transaction
-	  const VALUES: BigNumber[] = [
-        BigNumber.from(0),
-        BigNumber.from(0)
+	const VALUES: BigNumber[] = [
+        GOAL
     ]
 
     /**
