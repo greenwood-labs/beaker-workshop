@@ -28,7 +28,7 @@ const main = async function () {
 	const FACTORY_ADDRESS = "0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f"
 
 	// create factory contract instance
-	const factory: Factory = (await hre.ethers.getContractAt(FactoryABI.abi, FACTORY_ADDRESS)) as Factory
+	const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
 
 	/**
 	 * DEFINE PARAMETERS
@@ -41,7 +41,7 @@ const main = async function () {
 	const PANGOLIN_ROUTER_ADDRESS = "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106"
 
 	// contract instance of the pangolin router
-	const PANGOLIN_ROUTER_CONTRACT = (await hre.ethers.getContractAt(IPangolinRouterABI.abi, PANGOLIN_ROUTER_ADDRESS)) as IPangolinRouter
+	const PANGOLIN_ROUTER_CONTRACT = (await hre.ethers.getContractAt(IPangolinRouterABI, PANGOLIN_ROUTER_ADDRESS)) as IPangolinRouter
 
 	// define params of swapExactAVAXForTokens from pangolin's router
 
