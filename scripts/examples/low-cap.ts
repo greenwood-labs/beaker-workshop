@@ -28,7 +28,7 @@ const main = async function () {
 	const FACTORY_ADDRESS = "0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f"
 
 	// create factory contract instance
-	const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
+	const factory: Factory = (await hre.ethers.getContractAt(FactoryABI.abi, FACTORY_ADDRESS)) as Factory
 
 	/**
 	 * DEFINE PARAMETERS
@@ -101,9 +101,7 @@ const main = async function () {
 	//
 	// for example, a signature for transferring tokens can be 
 	// derived as follows: generateEncoding(erc20ContractInstance, "transfer", [accountAddress, transferAmount])
-	const SIGNATURES: string[] = [
-		generateEncoding(PANGOLIN_ROUTER_CONTRACT, "swapExactAVAXForTokens", []),
-	]
+	const SIGNATURES: string[] = []
 
 	for (let i = 0; i < PATHS.length; i++) {
 		TARGETS.push(PANGOLIN_ROUTER_ADDRESS)
