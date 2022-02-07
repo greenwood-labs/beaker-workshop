@@ -13,9 +13,8 @@ const main = async function () {
 	/**
 	 * DESCRIPTION
 	 * 
-	 * This exposure token will add the AVAX funds to a simple yield optimizer on 
-	 * Beefy Finance. In return the exposure token will receive mooAaveAVAX tokens
-	 * which will be redeemable for constantly accruing AVAX.
+	 * This exposure token will swap given amount of AVAX with each token from the list: 
+	 * [QI, PNG, PEFI, JOE, KLO, BLZZ, CRA, TUS, SPORE, BAG] via Pangolin Router
 	 */
 
 	// get all signers stored in hardhat runtime
@@ -25,7 +24,7 @@ const main = async function () {
 	const signer = accounts[0]
 
 	// contract address of the exposure token factory
-	const FACTORY_ADDRESS = "0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f"
+	const FACTORY_ADDRESS = "0x071A0d274235C614992A745c98630F01035Afb9e"
 
 	// create factory contract instance
 	const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
