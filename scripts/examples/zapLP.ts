@@ -31,7 +31,7 @@ const main = async function () {
      */
 
     // contract address of the exposure token factory
-    const FACTORY_ADDRESS = '0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f'
+    const FACTORY_ADDRESS = '0x3D2ddc44848B077C213627FFE8F04897ff0f033d'
 
     // contract address of the Trader Joe Zap contract
     const ZAP_ADDRESS = '0x2C7B8e971c704371772eDaf16e0dB381A8D02027'

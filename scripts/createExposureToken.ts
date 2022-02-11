@@ -23,7 +23,7 @@ const main = async function () {
      */
 
     // contract address of the exposure token factory
-    const FACTORY_ADDRESS = '0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f'
+    const FACTORY_ADDRESS = '0x3D2ddc44848B077C213627FFE8F04897ff0f033d'
 
     // block that ends the funding phase of the exposure token
     const END_BLOCK = 1000000000000

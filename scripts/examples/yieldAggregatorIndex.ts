@@ -5,10 +5,12 @@ import { TransactionResponse, TransactionReceipt } from "@ethersproject/provider
 
 import FactoryABI from "../../abi/Factory.json"
 import IPangolinRouterABI from "../../abi/IPangolinRouter.json"
-import WavaxABI from '../../abi/Wavax.json'
-import { Factory, IPangolinRouter, Wavax } from "../../typechain"
+import { Factory, IPangolinRouter } from "../../typechain"
 import { generateEncoding } from "../../src/index"
 
+import ExpoTokenABI from '../../abi/ExposureToken.json'
+import ERC20ABI from '../../abi/ERC20.json'
+import { ExposureToken, ERC20 } from '../../typechain'
 
 const main = async function () {
 
@@ -16,7 +18,7 @@ const main = async function () {
 	 * DESCRIPTION
 	 * 
 	 * This exposure token will swap given amount of AVAX with each token from the list: 
-	 * [WETH.e, WBTC.e, WAVAX] via Pangolin Router
+	 * [SNOB, YAK, BIFI] via Pangolin Router
 	 */
 
 	// get all signers stored in hardhat runtime
@@ -48,22 +50,23 @@ const main = async function () {
 
 	const WAVAX_ADDRESS = "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7"
 
-    // contract instance of WAVAX
-    const WAVAX_CONTRACT = (await hre.ethers.getContractAt(WavaxABI, WAVAX_ADDRESS)) as Wavax
-
 	// contract address of desired tokens
-	const TOKENS: any = {
-		WETH: "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
-		WBTC: "0x50b7545627a5162F82A992c33b87aDc75187B218",
+	const TOKENS = {
+		SNOB: "0xc38f41a296a4493ff429f1238e030924a1542e50",
+		YAK: "0x59414b3089ce2af0010e7523dea7e2b35d776ec7",
+		BIFI: "0xd6070ae98b8069de6b494332d1a1a81b6179d960",
 	}
 
 	const PATHS = Object.values(TOKENS).map((token) => [WAVAX_ADDRESS, token])
+
+	const AMOUNT_IN = hre.ethers.utils.parseEther("5")
 
 	// determines the account's eToken id
 	const accountTokenId = await factory.accountExposureTokens(signer.address)
 
 	// determines the exposure token address
 	const computedETokenAddress = await factory.computeExposureTokenAddress(signer.address, accountTokenId)
+	console.log('COMPUTED ADDRESS: ', computedETokenAddress);
 
 	const CURRENT_BLOCK = await hre.ethers.provider.getBlockNumber()
 	const CURRENT_TIMESTAMP = (await hre.ethers.provider.getBlock(CURRENT_BLOCK)).timestamp
@@ -71,13 +74,10 @@ const main = async function () {
 	const DEADLINE = CURRENT_TIMESTAMP + 86400
 
 	// block that ends the funding phase of the exposure token
-	const END_BLOCK = CURRENT_BLOCK + 86400
+	const END_BLOCK = CURRENT_BLOCK + (86400 * 4)
 
 	// target AVAX goal to reach
-	const GOAL = hre.ethers.utils.parseEther("10")
-
-	// Amount of AVAX to dedicate to each swap
-	const AMOUNT_IN = GOAL.div(3)
+	const GOAL = hre.ethers.utils.parseEther("15")
 
 	// the lowest price the exposure token contract can be bought out at
 	const FLOOR = GOAL.div(2)
@@ -86,7 +86,7 @@ const main = async function () {
 	const INITIAL_BUYOUT_PRICE = GOAL.mul(2)
 
 	// the name of the exposure token
-	const TOKEN_NAME = hre.ethers.utils.formatBytes32String("Blue-Chip-Investor")
+	const TOKEN_NAME = hre.ethers.utils.formatBytes32String("Yield Optimizer Token Index")
 
 	// the contract address to call for each transaction
 	const TARGETS: string[] = []
@@ -100,7 +100,6 @@ const main = async function () {
 	// derived as follows: generateEncoding(erc20ContractInstance, "transfer", [accountAddress, transferAmount])
 	const SIGNATURES: string[] = []
 
-    // generate encoding for pangolin router swap
 	for (let i = 0; i < PATHS.length; i++) {
 		TARGETS.push(PANGOLIN_ROUTER_ADDRESS)
 		SIGNATURES.push(generateEncoding(
@@ -115,14 +114,6 @@ const main = async function () {
 		))
 		VALUES.push(AMOUNT_IN)
 	}
-
-    // generate encodings for AVAX -> WAVAX wrapping
-    TARGETS.push(WAVAX_ADDRESS)
-    SIGNATURES.push(generateEncoding(
-        WAVAX_CONTRACT,
-        'deposit'
-    ))
-    VALUES.push(AMOUNT_IN)
 
 	/**
 	 * CONTRACT EXECUTION
@@ -157,6 +148,32 @@ const main = async function () {
 	console.log(`Exposure token id: ${exposureTokenId}`)
 	console.log(`Exposure token deployed to address: ${exposureTokenAddress}`)
 	console.log(`tx: ${receipt.transactionHash}`)
+
+	/**
+	 * 
+	 * TEST FINALIZATION
+	 * 
+	*/
+
+	// // get a handle to exposure token
+	// const expoToken: ExposureToken = (await hre.ethers.getContractAt(ExpoTokenABI, exposureTokenAddress)) as ExposureToken
+
+	// // contribute
+	// await expoToken.connect(signer).contribute(signer.address, { value: GOAL })
+   
+	// // finalize
+	// await expoToken.connect(signer).finalize()
+   
+	// // get handles to index tokens
+	// const token1: ERC20 = (await hre.ethers.getContractAt(ERC20ABI, TOKENS['SNOB'])) as ERC20
+	// const token2: ERC20 = (await hre.ethers.getContractAt(ERC20ABI, TOKENS['YAK'])) as ERC20
+	// const token3: ERC20 = (await hre.ethers.getContractAt(ERC20ABI, TOKENS['BIFI'])) as ERC20
+   
+	// // log exposure token balance of index token 
+	// console.log(await token1.balanceOf(exposureTokenAddress))
+	// console.log(await token2.balanceOf(exposureTokenAddress))
+	// console.log(await token3.balanceOf(exposureTokenAddress))
+
 }
 
 
