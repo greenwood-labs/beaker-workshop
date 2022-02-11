@@ -34,7 +34,7 @@ const main = async function () {
      */
 
     // contract address of the exposure token factory
-    const FACTORY_ADDRESS = '0xa1416448a7b91c2F178a8b7541AaeccdE0806E7f'
+    const FACTORY_ADDRESS = '0x3D2ddc44848B077C213627FFE8F04897ff0f033d'
 
     // contract address of the mooJoeJOE-AVAX vault
     const BEEFY_VAULT_ADDRESS = '0x3d81a269e05e6057e4df9e2d76e254e65a65eb66'
