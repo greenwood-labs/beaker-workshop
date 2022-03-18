@@ -21,6 +21,7 @@ const config: HardhatUserConfig = {
             forking: {
                 url: process.env.AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc',
             },
+            accounts
         },
         avalanche: {
             url: process.env.AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc',
