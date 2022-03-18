@@ -8,13 +8,17 @@ import IPangolinRouterABI from "../../abi/IPangolinRouter.json"
 import { Factory, IPangolinRouter } from "../../typechain"
 import { generateEncoding } from "../../src/index"
 
+import ExpoTokenABI from '../../abi/ExposureToken.json'
+import ERC20ABI from '../../abi/ERC20.json'
+import { ExposureToken, ERC20 } from '../../typechain'
+
 const main = async function () {
 
 	/**
 	 * DESCRIPTION
 	 * 
 	 * This exposure token will swap given amount of AVAX with each token from the list: 
-	 * [QI, PNG, PEFI, JOE, KLO, BLZZ, CRA, TUS, SPORE, BAG] via Pangolin Router
+	 * [EGG, AVE, KLO] via Pangolin Router
 	 */
 
 	// get all signers stored in hardhat runtime
@@ -24,7 +28,7 @@ const main = async function () {
 	const signer = accounts[0]
 
 	// contract address of the exposure token factory
-	const FACTORY_ADDRESS = "0x071A0d274235C614992A745c98630F01035Afb9e"
+	const FACTORY_ADDRESS = "0x3D2ddc44848B077C213627FFE8F04897ff0f033d"
 
 	// create factory contract instance
 	const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
@@ -48,27 +52,21 @@ const main = async function () {
 
 	// contract address of desired tokens
 	const TOKENS = {
-		QI: "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5",
-		PNG: "0x60781C2586D68229fde47564546784ab3fACA982",
-		PEFI: "0xe896CDeaAC9615145c0cA09C8Cd5C25bced6384c",
-		JOE: "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd",
-		KLO: "0xb27c8941a7Df8958A1778c0259f76D1F8B711C35",
-		BLZZ: "0x0f34919404a290e71fc6A510cB4a6aCb8D764b24",
-		CRA: "0xA32608e873F9DdEF944B24798db69d80Bbb4d1ed",
-		TUS: "0xf693248F96Fe03422FEa95aC0aFbBBc4a8FdD172",
-		SPORE: "0x6e7f5C0b9f4432716bDd0a77a3601291b9D9e985",
-		BAG: "0xa1144a6A1304bd9cbb16c800F7a867508726566E"
+		EGG: "0x7761E2338B35bCEB6BdA6ce477EF012bde7aE611",
+		AVE: "0x78ea17559b3d2cf85a7f9c2c704eda119db5e6de",
+		KLO: "0xb27c8941a7df8958a1778c0259f76d1f8b711c35",
 	}
 
 	const PATHS = Object.values(TOKENS).map((token) => [WAVAX_ADDRESS, token])
 
-	const AMOUNT_IN = hre.ethers.utils.parseEther("1")
+	const AMOUNT_IN = hre.ethers.utils.parseEther("5")
 
 	// determines the account's eToken id
 	const accountTokenId = await factory.accountExposureTokens(signer.address)
 
 	// determines the exposure token address
 	const computedETokenAddress = await factory.computeExposureTokenAddress(signer.address, accountTokenId)
+	console.log('COMPUTED ADDRESS: ', computedETokenAddress);
 
 	const CURRENT_BLOCK = await hre.ethers.provider.getBlockNumber()
 	const CURRENT_TIMESTAMP = (await hre.ethers.provider.getBlock(CURRENT_BLOCK)).timestamp
@@ -76,10 +74,10 @@ const main = async function () {
 	const DEADLINE = CURRENT_TIMESTAMP + 86400
 
 	// block that ends the funding phase of the exposure token
-	const END_BLOCK = CURRENT_BLOCK + 86400
+	const END_BLOCK = CURRENT_BLOCK + (86400 * 4)
 
 	// target AVAX goal to reach
-	const GOAL = hre.ethers.utils.parseEther("10")
+	const GOAL = hre.ethers.utils.parseEther("15")
 
 	// the lowest price the exposure token contract can be bought out at
 	const FLOOR = GOAL.div(2)
@@ -88,7 +86,7 @@ const main = async function () {
 	const INITIAL_BUYOUT_PRICE = GOAL.mul(2)
 
 	// the name of the exposure token
-	const TOKEN_NAME = hre.ethers.utils.formatBytes32String("Low-Cap-Investor")
+	const TOKEN_NAME = hre.ethers.utils.formatBytes32String("NFT Token Index")
 
 	// the contract address to call for each transaction
 	const TARGETS: string[] = []
@@ -150,6 +148,32 @@ const main = async function () {
 	console.log(`Exposure token id: ${exposureTokenId}`)
 	console.log(`Exposure token deployed to address: ${exposureTokenAddress}`)
 	console.log(`tx: ${receipt.transactionHash}`)
+
+
+	/**
+	 * 
+	 * TEST FINALIZATION
+	 * 
+	 */
+
+	// // get a handle to exposure token
+	// const expoToken: ExposureToken = (await hre.ethers.getContractAt(ExpoTokenABI, exposureTokenAddress)) as ExposureToken
+
+	// // contribute
+	// await expoToken.connect(signer).contribute(signer.address, { value: GOAL })
+   
+	// // finalize
+	// await expoToken.connect(signer).finalize()
+   
+	// // get handles to index tokens
+	// const token1: ERC20 = (await hre.ethers.getContractAt(ERC20ABI, TOKENS['EGG'])) as ERC20
+	// const token2: ERC20 = (await hre.ethers.getContractAt(ERC20ABI, TOKENS['AVE'])) as ERC20
+	// const token3: ERC20 = (await hre.ethers.getContractAt(ERC20ABI, TOKENS['KLO'])) as ERC20
+   
+	// // log exposure token balance of index token 
+	// console.log(await token1.balanceOf(exposureTokenAddress))
+	// console.log(await token2.balanceOf(exposureTokenAddress))
+	// console.log(await token3.balanceOf(exposureTokenAddress))
 }
 
 

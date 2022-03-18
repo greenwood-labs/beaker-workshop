@@ -25,7 +25,7 @@ const main = async function () {
 	const signer = accounts[0]
 
 	// contract address of the exposure token factory
-	const FACTORY_ADDRESS = "0x071A0d274235C614992A745c98630F01035Afb9e"
+	const FACTORY_ADDRESS = "0x3D2ddc44848B077C213627FFE8F04897ff0f033d"
 
 	// create factory contract instance
 	const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
