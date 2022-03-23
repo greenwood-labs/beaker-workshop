@@ -27,7 +27,7 @@ const main = async function () {
 
     // contract address of the beaker factory
     // NOTE: leave empty if deploying factory for the first time
-    let FACTORY_ADDRESS = ''
+    let FACTORY_ADDRESS = '0x9c674a373ffbdd6f3c117fce615ea85363f1c61a'
 
     // block that ends the funding phase of the beaker
     const END_BLOCK = 1000000000000
