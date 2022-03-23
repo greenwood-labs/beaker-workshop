@@ -5,7 +5,7 @@ import { TransactionResponse, TransactionReceipt } from '@ethersproject/provider
 
 import FactoryABI from '../abi/Factory.json'
 import { Factory } from '../typechain'
-import { generateEncoding } from '../src/index'
+import { makeFactory } from '../src/index'
 
 const main = async function () {
 
@@ -15,29 +15,33 @@ const main = async function () {
     // retrieve user account provided by mnemonic
     const signer = accounts[0]
 
+    // contract instance of the factory
+    let factory: Factory 
+
     /**
      * DEFINE PARAMETERS
      * 
-     * This section is for defining the parameters for creating an exposure token. 
+     * This section is for defining the parameters for creating a beaker. 
      * These are default placeholder values that are meant to be changed to custom values.
      */
 
-    // contract address of the exposure token factory
-    const FACTORY_ADDRESS = '0x3D2ddc44848B077C213627FFE8F04897ff0f033d'
+    // contract address of the beaker factory
+    // NOTE: leave empty if deploying factory for the first time
+    let FACTORY_ADDRESS = ''
 
-    // block that ends the funding phase of the exposure token
+    // block that ends the funding phase of the beaker
     const END_BLOCK = 1000000000000
 
     // target AVAX goal to reach
     const GOAL = hre.ethers.utils.parseEther('0.1')
 
-    // the lowest price the exposure token contract can be bought out at
+    // the lowest price the beaker contract can be bought out at
     const FLOOR = GOAL.div(2)
 
     // the initial buyout price 
     const INITIAL_BUYOUT_PRICE = GOAL.mul(2)
 
-    // the name of the exposure token
+    // the name of the beaker
     const TOKEN_NAME = hre.ethers.utils.formatBytes32String('token-name')
 
     // the contract address to call for each transaction
@@ -64,17 +68,21 @@ const main = async function () {
     /**
      * CONTRACT EXECUTION
      * 
-     * This section is for contract execution. The factory is instantiated and an 
-     * exposure token is created using the previously defined parameters. 
-     * After the transaction is confirmed, the ID of the exposure token and 
+     * This section is for contract execution. The factory is instantiated and a
+     * beaker is created using the previously defined parameters. 
+     * After the transaction is confirmed, the ID of the beaker and 
      * the contract address are displayed as output.
      */
 
     // create factory contract instance
-    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
+    if (FACTORY_ADDRESS === '') {
+        ({ factory } = await makeFactory(signer))
+    } else {
+        factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
+    }
 
-    // create exposure token
-    const tx: TransactionResponse = await factory.connect(signer).createExposureToken(
+    // create beaker
+    const tx: TransactionResponse = await factory.connect(signer).createBeaker(
         END_BLOCK,
         GOAL,
         FLOOR,
@@ -88,14 +96,14 @@ const main = async function () {
     // wait for transaction to confirm
     const receipt: TransactionReceipt = await tx.wait()
 
-    // exposure token id
-    const exposureTokenId = (await factory.exposureTokenCount()).sub(1)
+    // beaker id
+    const beakerId = (await factory.beakerCount()).sub(1)
 
-    // exposure token address
-    const exposureTokenAddress = await factory.getExposureToken(exposureTokenId)
+    // beaker address
+    const beakerAddress = await factory.getBeaker(beakerId)
 
-    console.log(`Exposure token id: ${exposureTokenId}`)
-    console.log(`Exposure token deployed to address: ${exposureTokenAddress}`)
+    console.log(`Beaker id: ${beakerId}`)
+    console.log(`Beaker deployed to address: ${beakerAddress}`)
     console.log(`tx: ${receipt.transactionHash}`)
 }
 

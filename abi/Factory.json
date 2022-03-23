@@ -26,7 +26,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "ExposureTokenCreated",
+        "name": "BeakerCreated",
         "type": "event"
     },
     {
@@ -37,7 +37,20 @@
                 "type": "address"
             }
         ],
-        "name": "accountExposureTokens",
+        "name": "accountBeakers",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "beakerCount",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -57,11 +70,11 @@
             },
             {
                 "internalType": "uint256",
-                "name": "_exposureTokenId",
+                "name": "_beakerId",
                 "type": "uint256"
             }
         ],
-        "name": "computeExposureTokenAddress",
+        "name": "computeBeakerAddress",
         "outputs": [
             {
                 "internalType": "address",
@@ -115,11 +128,11 @@
                 "type": "bytes32"
             }
         ],
-        "name": "createExposureToken",
+        "name": "createBeaker",
         "outputs": [
             {
                 "internalType": "address",
-                "name": "exposureToken",
+                "name": "beaker",
                 "type": "address"
             }
         ],
@@ -140,19 +153,6 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "exposureTokenCount",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -160,7 +160,7 @@
                 "type": "uint256"
             }
         ],
-        "name": "getExposureToken",
+        "name": "getBeaker",
         "outputs": [
             {
                 "internalType": "address",

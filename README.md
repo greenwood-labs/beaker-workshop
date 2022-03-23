@@ -1,11 +1,11 @@
-# Exposure Token Workshop
+# Beaker Workshop
 
 # Installation
 To install dependencies, `npm i`
 
 ## Environment Variables
 To use this workshop, create an `.env` file with two variables:
-- `MNEMONIC`: The mnemonic of the account address to create exposure tokens
+- `MNEMONIC`: The mnemonic of the account address to create beakers
 - `AVALANCHE_RPC`: The avalanche rpc url. If none is used, then `https://api.avax.network/ext/bc/C/rpc` is used by default
 
 ## Setup
@@ -18,12 +18,12 @@ You should only have to do this one time, or once after you add new ABI files.
 
 ## Usage
 
-The `createExposureToken.ts` script is a template script meant for easily spinning up an exposure token instance. The script is meant as a guide for arbitrary editing to deploy a desired exposure token.
+The `createBeaker.ts` script is a template script meant for easily spinning up a beaker instance. The script is meant as a guide for arbitrary editing to deploy a desired beaker.
 
 To run the script on an avalanche local fork for testing:
 
-`npx hardhat run scripts/createExposureToken.ts`
+`npx hardhat run scripts/createBeaker.ts`
 
 To run the script on the avalanche mainnet:
 
-`npx hardhat --network avalanche run scripts/createExposureToken.ts`
+`npx hardhat --network avalanche run scripts/createBeaker.ts`
