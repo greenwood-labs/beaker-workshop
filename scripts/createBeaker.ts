@@ -5,7 +5,6 @@ import { TransactionResponse, TransactionReceipt } from '@ethersproject/provider
 
 import FactoryABI from '../abi/Factory.json'
 import { Factory } from '../typechain'
-import { makeFactory } from '../src/index'
 
 const main = async function () {
 
@@ -14,9 +13,6 @@ const main = async function () {
 
     // retrieve user account provided by mnemonic
     const signer = accounts[0]
-
-    // contract instance of the factory
-    let factory: Factory 
 
     /**
      * DEFINE PARAMETERS
@@ -75,12 +71,8 @@ const main = async function () {
      */
 
     // create factory contract instance
-    if (FACTORY_ADDRESS === '') {
-        ({ factory } = await makeFactory(signer))
-    } else {
-        factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
-    }
-
+    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
+    
     // create beaker
     const tx: TransactionResponse = await factory.connect(signer).createBeaker(
         END_BLOCK,
