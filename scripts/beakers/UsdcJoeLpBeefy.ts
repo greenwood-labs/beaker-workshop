@@ -28,16 +28,18 @@ const main = async function () {
     // retrieve user account provided by mnemonic
     const signer = accounts[0]
 
+    // contract address of the beaker factory
+    const FACTORY_ADDRESS = '0x9c674a373ffbdd6f3c117fce615ea85363f1c61a'
+
+    // create factory contract instance
+    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
+
     /**
      * DEFINE PARAMETERS
      * 
      * This section is for defining the parameters for creating a beaker. 
      * These are default placeholder values that are meant to be changed to custom values.
      */
-
-    // contract address of the beaker factory
-    // NOTE: leave empty if deploying factory for the first time
-    const FACTORY_ADDRESS = '0x9c674a373ffbdd6f3c117fce615ea85363f1c61a'
 
     // contract address of the mooJoeUSDC-USDC.e vault
     const BEEFY_VAULT_ADDRESS = '0x42ab5A790E99dF1b5d46f1C5C3e61d0Cd63D1f6E'
@@ -104,9 +106,6 @@ const main = async function () {
      * After the transaction is confirmed, the ID of the beaker and 
      * the contract address are displayed as output.
      */
-
-    // create factory contract instance
-    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
 
     // create beaker
     const tx: TransactionResponse = await factory.connect(signer).createBeaker(

@@ -6,7 +6,9 @@ import FactoryABI from '../../abi/Factory.json'
 import BeefyVaultABI from '../../abi/BeefyVault.json'
 import JoeLpABI from '../../abi/JoeLP.json'
 import ZapABI from '../../abi/Zap.json'
-import { Factory, BeefyVault, Zap, JoeLP } from '../../typechain'
+import BeakerABI from '../../abi/Beaker.json'
+import ERC20ABI from '../../abi/ERC20.json'
+import { Factory, Beaker, ERC20, BeefyVault, Zap, JoeLP } from '../../typechain'
 import { generateEncoding } from '../../src/index'
 
 
@@ -15,7 +17,7 @@ const main = async function () {
     /**
      * DESCRIPTION
      * 
-     * This exposure token will zap the AVAX funds into a 
+     * This beaker will zap the AVAX funds into a 
      * JOE-AVAX liquidity pool on Trader Joe. Then it will take those LP tokens 
      * and deposit them into a Beefy Finance yield optimizer. 
      */
@@ -26,15 +28,18 @@ const main = async function () {
     // retrieve user account provided by mnemonic
     const signer = accounts[0]
 
+    // contract address of the beaker factory
+    const FACTORY_ADDRESS = '0x9c674a373ffbdd6f3c117fce615ea85363f1c61a'
+
+    // create factory contract instance
+    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
+
     /**
      * DEFINE PARAMETERS
      * 
-     * This section is for defining the parameters for creating an exposure token. 
+     * This section is for defining the parameters for creating a beaker. 
      * These are default placeholder values that are meant to be changed to custom values.
      */
-
-    // contract address of the exposure token factory
-    const FACTORY_ADDRESS = '0x3D2ddc44848B077C213627FFE8F04897ff0f033d'
 
     // contract address of the mooJoeJOE-AVAX vault
     const BEEFY_VAULT_ADDRESS = '0x3d81a269e05e6057e4df9e2d76e254e65a65eb66'
@@ -54,20 +59,20 @@ const main = async function () {
     // contract instance of the mooJoeJoeAvax LP token
     const JOE_AVAX_LP_CONTRACT: JoeLP = (await hre.ethers.getContractAt(JoeLpABI, JOE_AVAX_LP_ADDRESS)) as JoeLP
 
-    // block that ends the funding phase of the exposure token
+    // block that ends the funding phase of the beaker
     const END_BLOCK = 1000000000000
 
     // target AVAX goal to reach
     const GOAL = hre.ethers.utils.parseEther('0.1')
 
-    // the lowest price the exposure token contract can be bought out at
+    // the lowest price the beaker contract can be bought out at
     const FLOOR = GOAL.div(2)
 
     // the initial buyout price 
     const INITIAL_BUYOUT_PRICE = GOAL.mul(2)
 
-    // the name of the exposure token
-    const TOKEN_NAME = hre.ethers.utils.formatBytes32String('joeAvax-lp-beefy')
+    // the name of the beaker
+    const TOKEN_NAME = hre.ethers.utils.formatBytes32String('JOE/AVAX LP Beefy')
 
     // the contract address to call for each transaction
     const TARGETS: string[] = [
@@ -96,17 +101,14 @@ const main = async function () {
     /**
      * CONTRACT EXECUTION
      * 
-     * This section is for contract execution. The factory is instantiated and an 
-     * exposure token is created using the previously defined parameters. 
-     * After the transaction is confirmed, the ID of the exposure token and 
+     * This section is for contract execution. The factory is instantiated and a 
+     * beaker is created using the previously defined parameters. 
+     * After the transaction is confirmed, the ID of the beaker and 
      * the contract address are displayed as output.
      */
 
-    // create factory contract instance
-    const factory: Factory = (await hre.ethers.getContractAt(FactoryABI, FACTORY_ADDRESS)) as Factory
-
-    // create exposure token
-    const tx: TransactionResponse = await factory.connect(signer).createExposureToken(
+    // create beaker
+    const tx: TransactionResponse = await factory.connect(signer).createBeaker(
         END_BLOCK,
         GOAL,
         FLOOR,
@@ -120,15 +122,32 @@ const main = async function () {
     // wait for transaction to confirm
     const receipt: TransactionReceipt = await tx.wait()
 
-    // exposure token id
-    const exposureTokenId = (await factory.exposureTokenCount()).sub(1)
+    // beaker id
+    const beakerId = (await factory.beakerCount()).sub(1)
 
-    // exposure token address
-    const exposureTokenAddress = await factory.getExposureToken(exposureTokenId)
+    // beaker address
+    const beakerAddress = await factory.getBeaker(beakerId)
 
-    console.log(`Exposure token id: ${exposureTokenId}`)
-    console.log(`Exposure token deployed to address: ${exposureTokenAddress}`)
+    console.log(`beaker id: ${beakerId}`)
+    console.log(`beaker deployed to address: ${beakerAddress}`)
     console.log(`tx: ${receipt.transactionHash}`)
+
+    // get the current network name
+    const network = await hre.network.name
+
+    // only run this code if testing deployment on a forked hardhat network
+    if (network === 'hardhat') {
+        // simulate contribute
+        const beaker: Beaker = (await hre.ethers.getContractAt(BeakerABI, beakerAddress)) as Beaker
+        await beaker.connect(signer).contribute(signer.address, {value: GOAL})
+
+        // simulate finalize
+        await beaker.connect(signer).finalize()
+
+        // test that the transactions executed correctly
+        const token: ERC20 = (await hre.ethers.getContractAt(ERC20ABI, BEEFY_VAULT_ADDRESS)) as ERC20
+        console.log(await token.balanceOf(beakerAddress))
+    }
 }
 
 main()
