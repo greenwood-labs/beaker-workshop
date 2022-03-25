@@ -6,12 +6,10 @@ import FactoryABI from '../../abi/Factory.json'
 import BeefyVaultABI from '../../abi/BeefyVault.json'
 import JoeLpABI from '../../abi/JoeLP.json'
 import ZapABI from '../../abi/Zap.json'
-import { Factory, BeefyVault, Zap, JoeLP, Beaker } from '../../typechain'
-import { generateEncoding } from '../../src/index'
-
 import BeakerABI from '../../abi/Beaker.json'
 import ERC20ABI from '../../abi/ERC20.json'
-import { ERC20 } from '../../typechain'
+import { Factory, BeefyVault, Zap, JoeLP, Beaker, ERC20 } from '../../typechain'
+import { generateEncoding } from '../../src/index'
 
 
 const main = async function () {

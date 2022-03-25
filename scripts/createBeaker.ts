@@ -4,7 +4,9 @@ import { BigNumber } from 'ethers'
 import { TransactionResponse, TransactionReceipt } from '@ethersproject/providers'
 
 import FactoryABI from '../abi/Factory.json'
-import { Factory } from '../typechain'
+import BeakerABI from '../abi/Beaker.json'
+import ERC20ABI from '../abi/ERC20.json'
+import { Factory, Beaker, ERC20 } from '../typechain'
 
 const main = async function () {
 
@@ -97,6 +99,21 @@ const main = async function () {
     console.log(`Beaker id: ${beakerId}`)
     console.log(`Beaker deployed to address: ${beakerAddress}`)
     console.log(`tx: ${receipt.transactionHash}`)
+
+    // get the current network name
+    const network = await hre.network.name
+
+    // only run this code if testing deployment on a forked hardhat network
+    if (network === 'hardhat') {
+        // simulate contribute
+        const beaker: Beaker = (await hre.ethers.getContractAt(BeakerABI, beakerAddress)) as Beaker
+        await beaker.connect(signer).contribute(signer.address, {value: GOAL})
+
+        // simulate finalize
+        await beaker.connect(signer).finalize()
+
+        // test that the transactions executed correctly here
+    }
 }
 
 main()
