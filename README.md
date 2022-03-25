@@ -1,4 +1,11 @@
 # Beaker Workshop
+<p align="center"> 
+    <img 
+        src="https://user-images.githubusercontent.com/8098163/160152339-2498075b-dbd7-41cd-837c-36fbb0be4bf4.png" 
+        alt="beaker workshop"
+        height="70%"
+        width="100%">
+</p>
 
 # Installation
 To install dependencies, `npm i`
