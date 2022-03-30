@@ -73,7 +73,7 @@ const main = async function () {
 	const DEADLINE = CURRENT_TIMESTAMP + 86400
 
 	// block that ends the funding phase of the beaker
-	const END_BLOCK = CURRENT_BLOCK + 86400
+	const END_BLOCK = CURRENT_BLOCK + 1209600
 
     // target AVAX goal to reach
     const GOAL = hre.ethers.utils.parseEther('1000')
