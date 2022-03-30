@@ -70,10 +70,15 @@ const main = async function () {
 	const CURRENT_BLOCK = await hre.ethers.provider.getBlockNumber()
 	const CURRENT_TIMESTAMP = (await hre.ethers.provider.getBlock(CURRENT_BLOCK)).timestamp
 
-	const DEADLINE = CURRENT_TIMESTAMP + 86400
+    const ONE_DAY = 86400
+    const FIVE_DAYS = ONE_DAY * 5
+    const TWO_WEEKS = 1209600
+
+    // deadline for when the swaps can be completed
+	const DEADLINE = CURRENT_TIMESTAMP + TWO_WEEKS + FIVE_DAYS
 
 	// block that ends the funding phase of the beaker
-	const END_BLOCK = CURRENT_BLOCK + 1209600
+	const END_BLOCK = CURRENT_BLOCK + TWO_WEEKS
 
     // target AVAX goal to reach
     const GOAL = hre.ethers.utils.parseEther('1000')
